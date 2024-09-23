@@ -1,7 +1,6 @@
 // Verificar si hay una URL personalizada en la dirección actual
 window.onload = function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const shortCode = urlParams.get('url');
+    const shortCode = window.location.pathname.split('/').pop();
     if (shortCode) {
         const originalUrl = localStorage.getItem(shortCode);
         if (originalUrl) {
@@ -36,8 +35,8 @@ function personalizarURL() {
     // Guardar la URL en localStorage
     localStorage.setItem(urlPersonalizada, urlOriginal);
 
-    const urlActual = window.location.href.split('?')[0]; // Obtener la URL base sin parámetros
-    const urlCorta = `${urlActual}?url=${urlPersonalizada}`;
+    const urlBase = window.location.origin + window.location.pathname;
+    const urlCorta = `${urlBase}${urlPersonalizada}`;
 
     resultado.innerHTML = `
         <p>URL Original: ${urlOriginal}</p>
