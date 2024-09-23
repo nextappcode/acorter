@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acortador de URLs Personalizado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #5cb85c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #4cae4c;
+        }
+        #resultado {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9e9e9;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Acortador de URLs Personalizado</h1>
+        <input type="url" id="urlOriginal" placeholder="Ingresa la URL original" required>
+        <input type="text" id="urlPersonalizada" placeholder="Ingresa tu URL personalizada (opcional)">
+        <button onclick="acortarURL()">Acortar URL</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        // Verificar si hay una URL acortada en la dirección actual
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shortCode = urlParams.get('url');
+            if (shortCode) {
+                const originalUrl = localStorage.getItem(shortCode);
+                if (originalUrl) {
+                    window.location.href = originalUrl;
+                } else {
+                    document.getElementById('resultado').innerHTML = 'URL acortada no encontrada.';
+                }
+            }
+        }
+
+        function acortarURL() {
+            const urlOriginal = document.getElementById('urlOriginal').value;
+            let urlPersonalizada = document.getElementById('urlPersonalizada').value;
+            const resultado = document.getElementById('resultado');
+
+            if (!urlOriginal) {
+                resultado.innerHTML = 'Por favor, ingresa una URL válida.';
+                return;
+            }
+
+            if (!urlPersonalizada) {
+                urlPersonalizada = generarCodigoAleatorio(6);
+            }
+
+            // Guardar la URL en localStorage
+            localStorage.setItem(urlPersonalizada, urlOriginal);
+
+            const urlActual = window.location.href.split('?')[0]; // Obtener la URL base sin parámetros
+            const urlCorta = `${urlActual}?url=${urlPersonalizada}`;
+
+            resultado.innerHTML = `
+                <p>URL Original: ${urlOriginal}</p>
+                <p>URL Acortada: <a href="${urlCorta}" target="_blank">${urlCorta}</a></p>
+            `;
+        }
+
+        function generarCodigoAleatorio(longitud) {
+            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let resultado = '';
+            for (let i = 0; i < longitud; i++) {
+                resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            return resultado;
+        }
+    </script>
+</body>
+</html>
